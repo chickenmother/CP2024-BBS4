@@ -111,7 +111,9 @@ function createPost(author, content) {
 
     // author はログインしているユーザのメールアドレスに変更、userId を追加
     const postData = {
-        author: currentUser.email,
+        author: currentUser.displayName,
+        displayName: currentUser.displayName,
+        email : currentUser.email,
         content: content,
         timestamp: firebase.database.ServerValue.TIMESTAMP,
         userId: currentUser.uid
@@ -386,7 +388,7 @@ function animateUpdate(postId) {
 }
 
 // ログイン処理
-function login(email, password) {
+function login(username, email, password) {
     if (!validateAuthInput(email, password)) return;
 
     const button = $('#loginButton');
@@ -406,13 +408,18 @@ function login(email, password) {
 }
 
 // 新規登録処理
-function register(email, password) {
+function register(username, email, password) {
     if (!validateAuthInput(email, password, true)) return;
 
     const button = $('#registerButton');
     button.prop('disabled', true);
 
     firebase.auth().createUserWithEmailAndPassword(email, password)
+        .then((result) => {
+            return result.user.updateProfile({
+                displayName: username
+            });
+        })
         .then(() => {
             showMessage('アカウントを作成しました');
             clearAuthForm();
@@ -438,6 +445,7 @@ function logout() {
 
 // 認証フォームのクリア
 function clearAuthForm() {
+    $('#loginUsername').val('');
     $('#loginEmail').val('');
     $('#loginPassword').val('');
 }
@@ -448,7 +456,7 @@ function updateUI(user) {
     if (user) {
         $('.logged-in').show();
         $('.logged-out').hide();
-        $('#userEmail').text(currentUser.email);
+        $('#userEmail').text(currentUser.displayName);
     } else {
         $('.logged-in').hide();
         $('.logged-out').show();
@@ -486,15 +494,17 @@ $(function() {
     });
 
     $('#loginButton').on('click', function() {
+        const username = $('#loginUsername').val();
         const email = $('#loginEmail').val();
         const password = $('#loginPassword').val();
-        login(email, password);
+        login(username, email, password);
     });
 
     $('#registerButton').on('click', function() {
+        const username = $('#loginUsername').val();
         const email = $('#loginEmail').val();
         const password = $('#loginPassword').val();
-        register(email, password);
+        register(username, email, password);
     });
 
     $('#logoutButton').on('click', logout);
@@ -526,7 +536,7 @@ window.addEventListener('unload', function() {
         <div class="auth-container logged-out">
             <div class="form-group">
                 <label for="loginNickname">ユーザー名</label>
-                <input type="text" id="loginNickname" 
+                <input type="text" id="loginUsername" 
                        class="form-control" placeholder="">
             </div>
             <div class="form-group">
