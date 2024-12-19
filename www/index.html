@@ -82,9 +82,11 @@ function validateContent(content) {
 
 // 認証フォームのバリデーション
 function validateAuthInput(username, email, password, isRegister = false) {
-    if (!username || !email.trim()) {
-        showMessage('ユーザー名を入力してください', 'error');
-        return false;
+    if (isRegister == false){
+        if (!username || !email.trim()) {
+            showMessage('ユーザー名を入力してください', 'error');
+            return false;
+        }
     }
     if (!email || !email.trim()) {
         showMessage('メールアドレスを入力してください', 'error');
@@ -393,7 +395,7 @@ function animateUpdate(postId) {
 
 // ログイン処理
 function login(username, email, password) {
-    if (!validateAuthInput(username, email, password)) return;
+    if (!validateAuthInput(username, email, password, true)) return;
 
     const button = $('#loginButton');
     button.prop('disabled', true);
