@@ -415,7 +415,7 @@ function login(username, email, password) {
 
 // 新規登録処理
 function register(username, email, password) {
-    if (!validateAuthInput(username, email, password, true)) return;
+    if (!validateAuthInput(username, email, password)) return;
 
     const button = $('#registerButton');
     button.prop('disabled', true);
@@ -435,6 +435,7 @@ function register(username, email, password) {
         })
         .finally(() => {
             button.prop('disabled', false);
+            updateUI(user=currentUser);
         });
 }
 
