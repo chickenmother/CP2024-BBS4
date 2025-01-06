@@ -154,11 +154,28 @@ function escapeHtml(str) {
 function formatTimestamp(timestamp) {
     const date = new Date(timestamp);
     const currentDate = new Date();
+    const formatDate = date.toLocaleString('ja-JP', {
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit',
+        hour: '2-digit',
+        minute: '2-digit'
+    });
+    const formatTime = date.toLocaleString('ja-JP', {
+        hour: '2-digit',
+        minute: '2-digit'
+    });
 
-    const  diffenrnce = Math.floor((currentDate-date)/(1000*60*60*24));
 
-    return diffenrnce+"日前";
 
+    const  difference_hours = Math.round((currentDate-date)/(1000*60*60));
+    const  difference_days = Math.round((currentDate-date)/(1000*60*60*24));
+
+    if(difference_days==0){
+        return "今日(" +  formatTime + ")";
+    }else{
+        return difference_days + "日前(" +  formatDate + ")";
+    }
 
     /*return date.toLocaleString('ja-JP', {
         year: 'numeric',
